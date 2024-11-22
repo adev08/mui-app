@@ -1,0 +1,274 @@
+import React, { Component } from 'react';
+import { Form, FormGroup, Label, Input, Button, Col, FormFeedback } from 'reactstrap';
+
+class RegistrationForm extends Component{
+    constructor(props){
+        super(props);
+
+        //1
+        this.state = {
+            firstName: '',
+            lastName: '',
+            userName: '',
+            phoneNum: '',
+            testField: '',
+            email: '',
+            agree: false,
+            touched: {
+                firstName: false,
+                lastName: false,
+                userName: false,
+                phoneNum: false,
+                email: false,
+                testField: false
+            }
+        }
+
+        //3
+        this.handleInputChange = this.handleInputChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    // 2
+    handleInputChange(event){
+        const target = event.target;
+        const name = target.name;
+        const value = target.type === 'checkbox' ? target.checked : target.value;
+
+        this.setState({[name]: value}) //bracket notation to use the "name" to find the matching state property
+    }
+
+    //4
+    handleSubmit(event){
+        console.log("Current state is: " + JSON.stringify(this.state));
+        alert("Current state is: " + JSON.stringify(this.state));
+
+        event.preventDefault();
+    }
+
+    handleBlur = (property) => () => {
+        this.setState({
+            touched: {...this.state.touched, [property]:true}
+        })
+    }
+
+    //Check parameters of inputs
+    check(firstName, lastName, userName, phoneNum, email, testField){
+        const errors = {
+            firstName: '',
+            lastName: '',
+            phoneNum: '',
+            userName: '',
+            email:'',
+            testField:''
+        }
+
+        if(this.state.touched.firstName){
+            if(firstName.length < 2){
+                errors.firstName = 'First name must be at least 2 characters';
+            } else if (firstName.length > 15){
+                errors.firstName = 'First name must be equal to or less than 15 characters';
+            }
+        }
+
+        if(this.state.touched.lastName){
+            if(lastName.length < 2){
+                errors.lastName = 'Last name must be at least 2 characters';
+            } else if (lastName.length > 15){
+                errors.lastName = 'Last name must be equal to or less than 15 characters';
+            }
+        }
+
+        if(this.state.touched.userName){
+            if(userName.length < 2){
+                errors.userName = 'Username must be at least 2 characters';
+            } else if (userName.length > 15){
+                errors.userName = 'Username must be equal to or less than 15 characters';
+            }
+        }
+
+        if(this.state.touched.testField){
+            if(testField.length < 2){
+                errors.testField = 'Username must be at least 2 characters';
+            } else if (testField.length > 15){
+                errors.testField = 'Username must be equal to or less than 15 characters';
+            }
+        }
+
+        if(this.state.touched.email && !email.includes('@')){
+            errors.email = 'Your email must include an "@".'
+        }
+
+        const reg = /^\d+$/;
+        if (this.state.touched.phoneNum && !reg.test(phoneNum)) {
+            errors.phoneNum = 'The phone number should contain only numbers.';
+        }
+
+        return errors
+    }
+
+    render(){
+
+        //Display "state" from "check" method
+        const errors = this.check(this.state.firstName, this.state.lastName, this.state.phoneNum, this.state.userName, this.state.email, this.state.testField);
+
+        return(
+            <div className="row row-content">
+                <div className="col-12 mt-3">
+                    <h2>Register for an Account & Stay Updated!</h2>
+                    <hr />
+                </div>
+                <div className="col-md-10">
+
+                    <Form onSubmit={this.handleSubmit}>
+                        <FormGroup row>
+                            <Label htmlFor="firstName" md={2}>First Name</Label>
+                            <Col md={6}>
+                                <Input
+                                    type="text"
+                                    id="firstName"
+                                    placeholder='First Name'
+                                    name="firstName"
+                                    onChange={this.handleInputChange}
+                                    onBlur={this.handleBlur("firstName")}
+                                    invalid={errors.firstName}
+                                    value={this.state.firstName}                                    
+                                />
+                                <FormFeedback>{errors.firstName}</FormFeedback>
+                            </Col>
+                        </FormGroup>
+
+                        <FormGroup row>
+                            <Label htmlFor="testField" md={2}>Test Field</Label>
+                            <Col md={6}>
+                                <Input
+                                    type="text"
+                                    id="testField"
+                                    placeholder='Test Field'
+                                    name="testField"
+                                    onChange={this.handleInputChange}
+                                    onBlur={this.handleBlur("testField")}
+                                    invalid={errors.testField}
+                                    value={this.state.testField}                                    
+                                />
+                                <FormFeedback>{errors.testField}</FormFeedback>
+                            </Col>
+                        </FormGroup>
+        
+                        <FormGroup row>
+                            <Label htmlFor="lastName" md={2}>Last Name</Label>
+                            <Col md={6}>
+                                <Input 
+                                    type="text"
+                                    id="lastName"
+                                    placeholder='Last Name'
+                                    name="lastName"
+                                    value={this.state.lastName}
+                                    invalid={errors.lastName}
+                                    onBlur={this.handleBlur("lastName")}
+                                    onChange={this.handleInputChange} 
+                                />
+                                <FormFeedback>{errors.lastName}</FormFeedback>
+                            </Col>
+                        </FormGroup>
+    
+                        <FormGroup row>
+                            <Label htmlFor="userName" md={2}>Username</Label>
+                            <Col md={6}>
+                                <Input
+                                     type="text"
+                                     id="userName"
+                                     placeholder='Username'
+                                     name="userName"
+                                     value={this.state.userName}
+                                     invalid={errors.userName}
+                                     onBlur={this.handleBlur("userName")}
+                                     onChange={this.handleInputChange}                                
+                                />
+                                <FormFeedback>{errors.userName}</FormFeedback>
+                            </Col>
+                        </FormGroup>
+
+                        <FormGroup>
+                            <Label htmlFor="phoneNum">Phone Number</Label>
+                            <Input 
+                                type="tel"
+                                id="phoneNum"
+                                placeholder="Phone Number"
+                                name="phoneNum"
+                                value={this.state.phoneNum}
+                                invalid={errors.phoneNum}
+                                onChange={this.handleInputChange}
+                                onBlur={this.handleBlur('phoneNum')}
+
+                            />
+                            <FormFeedback>{errors.phoneNum}</FormFeedback>
+                        </FormGroup>
+               
+                        <FormGroup>
+                            <Label htmlFor="email">Email</Label>
+                            <Input
+                                type="email"
+                                id="email"
+                                placeholder="Email"
+                                name="email"
+                                value={this.state.email}
+                                invalid={errors.email}
+                                onChange={this.handleInputChange}
+                                onBlur={this.handleBlur('email')}
+                            />
+                            <FormFeedback>{errors.email}</FormFeedback>
+                        </FormGroup>
+
+                        <FormGroup row>
+                            <Col md={6}>
+                                <FormGroup check>
+                                    <Label check>
+                                        <Input 
+                                            type="checkbox"
+                                            name="agree"
+                                            checked={this.state.agree}
+                                            onChange={this.handleInputChange}
+                                        />{' '}
+                                        <strong>May we contact you?</strong>
+                                    </Label>
+
+                                </FormGroup>
+                            </Col>
+                            
+                            <Col md={4}>
+                                <Input type="select" name="contactType">
+                                    <option>By Phone</option>
+                                    <option>By Email</option>
+                                </Input>
+                            </Col>
+                        </FormGroup>
+                        
+                        <FormGroup>
+                            <Button type="submit" value="submit" color="primary">Submit</Button>
+                        </FormGroup>
+                        
+                    </Form>
+                </div>
+            </div>
+        )
+    }
+    
+}
+
+
+class Register extends Component {
+    render(){
+        return(
+            <div className="container">
+                <RegistrationForm />
+            </div>
+
+        )
+    }
+}
+
+export default Register;
+
+
+// https://stackoverflow.com/questions/64923508/verifying-state-and-input-react-issue?rq=4
